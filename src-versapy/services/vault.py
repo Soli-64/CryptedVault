@@ -8,89 +8,95 @@ from .cryptage import DataManager, wipe
 
 PROOF = "CRYPTEDVAULT-PROOF-2025-OK"
 
-class User(Model):
+class Vault(Model):
     """
         Base storage Model
     """
-    username: str = "default"
+    name: str = "base-vault-name"
     encrypted_data: str = "default"
     password_proof: str = ""
 
 
-class UsersManager:
+class VaultsManager:
 
     def __init__(self, app: VersaPyApp) -> None:
         self.app = app
         self.current_fernet: Fernet | None = None
-        self.current_user: User | None = None
+        self.current_vault: Vault | None = None
         self._shared_vault = None
 
-    def create(self, username, pasw):
+    def load_vault_names(self):
+        names = []
+        for vault in self.app.storage.get_all(Vault):
+            names.append(vault.name)
+        return names
+        
+    def create(self, vaultname, pasw):
 
-        if self.load(username, pasw)["success"]:
+        if self.load(vaultname, pasw)["success"]:
             wipe(pasw)
-            return {"success": False, "error": "Username already exists"}
+            return {"success": False, "error": f"Vault {vaultname} already exists."}
 
         fernet = DataManager.Fernet(pasw)
         wipe(pasw)
         self.current_fernet = fernet
-        user = User(
+        vault = Vault(
             self.app, 
-            username=username,
+            name=vaultname,
             password_proof=DataManager.encrypt(fernet, PROOF),
             encrypted_data=DataManager.encrypt(fernet, "{}")
         )
-        self.current_user = user
+        self.current_vault = vault
         self.decrypt_data()
-        return  {"success": True, "error": None, "data": user}
+        return  {"success": True, "error": None, "data": vault}
 
-    def load(self, username, pasw):
+    def load(self, vaultname, pasw):
         fernet = DataManager.Fernet(pasw)
         wipe(pasw)  
-        for user in self.app.storage.get_all(User):
-            if user.username != username:
+        for vault in self.app.storage.get_all(Vault):
+            if vault.name != vaultname:
                 continue
             try:
-                if DataManager.decrypt(fernet, user.password_proof) == PROOF:
+                if DataManager.decrypt(fernet, vault.password_proof) == PROOF:
                     self.current_fernet = fernet
-                    self.current_user = user
+                    self.current_vault = vault
                     self.decrypt_data()
-                    return {"success": True, "error": None, "data": user}
+                    return {"success": True, "error": None, "data": vault}
                 else:
                     return {"success": False, "error": "wrong-password", "data": None}
             except Exception:
                 pass
             
-        return {"success": False, "error": "wrong-username", "data": None}
+        return {"success": False, "error": "wrong-vaultname", "data": None}
 
     def decrypt_data(self) -> str:
-        if not self.current_fernet or not self.current_user:
+        if not self.current_fernet or not self.current_vault:
             return {"success": False, "error": "not logged in", "data": None}
         try:
-            data = DataManager.decrypt(self.current_fernet, self.current_user.encrypted_data)
+            data = DataManager.decrypt(self.current_fernet, self.current_vault.encrypted_data)
             self._shared_vault = self.app.SharedValue("decrypted_data", data, lambda _: self.update(data=_))
             wipe(data)
         except:
             self.current_fernet = None
             return {"success": False, "error": "error while decrypting data", "data": None}
     
-    def update(self, data=None, username=None):
-        if not self.current_fernet or not self.current_user:
+    def update(self, data=None, vaultname=None):
+        if not self.current_fernet or not self.current_vault:
             wipe(data)
             return {"success": False, "error": "not logged in", "data": None}
         
         if data is not None:
-            self.current_user.update(encrypted_data=DataManager.encrypt(self.current_fernet, data))
+            self.current_vault.update(encrypted_data=DataManager.encrypt(self.current_fernet, data))
             wipe(data)
-        if username is not None:
-            self.current_user.update(username=username)
+        if vaultname is not None:
+            self.current_vault.update(name=vaultname)
 
         return {"success": True, "error": None, "data": None}
         
     def delete(self):
-        if not self.current_fernet or not self.current_user:
+        if not self.current_fernet or not self.current_vault:
             return {"success": False, "error": "not logged in", "data": None}
-        self.current_user.delete()
+        self.current_vault.delete()
         return {"success": True, "error": None, "data": None}
 
     def reset(self):
@@ -109,5 +115,5 @@ class UsersManager:
             self._shared_vault = None
 
         self.current_fernet = None
-        self.current_user = None
+        self.current_vault = None
         

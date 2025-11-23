@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom"
-import { NabBar } from "../../components/NavBar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 
 const StaticLayout = () => {
 
@@ -7,26 +8,11 @@ const StaticLayout = () => {
         <div
         className="w-full h-screen flex flex-row overflow-hidden"
         >
-            <NabBar links={[
-                {
-                    "name": "Home",
-                    "path": "/"
-                },
-                {
-                    "name": "Login",
-                    "path": "/login"
-                },
-            ]} />
-            <div 
-                style={{
-                    paddingLeft: "4vw",
-                    overflow: "hidden",
-                    height: "100vh"
-                }}
-                className="overflow-hidden h-screen"
-            >
+            <SidebarProvider>
+                <AppSidebar />
                 <Outlet/>
-            </div>
+            </SidebarProvider>
+
         </div>
     )
 
