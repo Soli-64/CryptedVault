@@ -1,8 +1,8 @@
 
-import { useEffect, useState } from "react";
-import { invoke, createSharedValue } from "versapy/api";
-import { UnlockView } from "./views/UnlockView";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
+import { createSharedValue, invoke } from "versapy/api";
+import { UnlockView } from "./views/UnlockView";
 
 const useStoredData = (condition: boolean) => {
     const [data, setData] = useState<string>("")
@@ -60,7 +60,6 @@ const HomeView = () => {
                 />
             }
             <SidebarTrigger />
-            HomeView
         </div>
     )
 
