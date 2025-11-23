@@ -8,8 +8,6 @@ app = VersaPyApp()
 
 manager = UsersManager(app)
 
-print(app.storage.path)
-
 @app.expose
 def create_user(username,pasw):
     r = manager.create(username, pasw)["success"]
@@ -29,14 +27,6 @@ def log_out():
 @app.expose
 def delete_user():
     return manager.delete()["success"]
-
-@app.expose
-def get_data():
-    return manager.decrypt_data()
-
-@app.expose
-def update_data(data):
-    manager.update(data=data)
 
 if __name__ == "__main__":
     

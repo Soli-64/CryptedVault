@@ -1,4 +1,4 @@
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet as F
 from argon2.low_level import hash_secret_raw, Type
 import base64
 import os
@@ -33,19 +33,15 @@ class DataManager:
     def Fernet(pasw: str):
         key = DataManager.pasw_to_key(pasw)
         wipe(pasw)
-        cipher = Fernet(key)
+        cipher = F(key)
         return cipher
 
     @staticmethod
-    def encrypt(fernet: Fernet, data: str) -> str:
-
+    def encrypt(fernet: F, data: str) -> str:
         crypted_data = fernet.encrypt(data.encode())
-
+        wipe(data)
         return crypted_data.decode()
 
     @staticmethod
-    def decrypt(fernet: Fernet, data: str) -> str:
-
-        decrypted_data = fernet.decrypt(data.encode())
-
-        return decrypted_data.decode()
+    def decrypt(fernet: F, data: str) -> str:
+        return fernet.decrypt(data.encode()).decode()
