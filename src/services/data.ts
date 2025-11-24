@@ -26,27 +26,80 @@ export class DataManager {
         this.setData(this.json_data())
     }
 
-    add_note(title: string) {
-        let check = this.data.notes.filter(n => n.title === title)
+    // NOTES
+
+    add_note(props: Omit<Note, 'id'>) {
+        let check = this.data.notes.filter(n => n.title === props.title)
         if (check.length > 0) return toast("Can't create 2 notes with the same name.")
-        const note = {
+        const note: Note = {
             id: Date.now()*Math.random(),
-            title
+            ...props
         }
         this.data.notes.push(note)
+        this.update_db()
     }
 
     update_note(id: number, updates: Partial<Omit<Note, 'id'>>) {
         this.data.notes.map(n => {
             n.id === id ? {...n, ...updates} : {...n}
         })
+        this.update_db()
     }
 
     del_note(id: number) {
         this.data.notes = this.data.notes.filter(n => n.id !== id)
+        this.update_db()
     }
 
-    get_tags() {
+    // LOGINS
+
+    add_login(props: Omit<Login, "id">) {
+        const login: Login = {
+            id: Date.now()*Math.random(),
+            ...props
+        }
+        this.data.logins.push(login)
+        this.update_db()
+    }
+
+    update_login(id: number, updates: Partial<Omit<Login, 'id'>>) {
+        this.data.logins.map(l => {
+            l.id === id ? {...l, ...updates} : {...l}
+        })
+        this.update_db()
+    }
+
+    del_login(id: number) {
+        this.data.logins = this.data.logins.filter(l => l.id !== id)
+        this.update_db()
+    }
+
+    // TAGS
+
+    add_tag(props: Omit<Tag, "id">) {
+        const tag: Tag = {
+            id: Date.now()*Math.random(),
+            ...props
+        }
+        this.data.tags.push(tag)
+        this.update_db()
+    }
+
+    update_tag(id: number, updates: Partial<Omit<Tag, 'id'>>) {
+        this.data.tags.map(t => {
+            t.id === id ? {...t, ...updates} : {...t}
+        })
+        this.update_db()
+    }
+
+    del_tag(id: number) {
+        this.data.tags = this.data.tags.filter(t => t.id !== id)
+        this.update_db()
+    }
+
+    // GETS
+
+    get_tags(): Tag[] {
         return this.data.tags
     }
 
