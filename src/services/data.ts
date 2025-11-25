@@ -140,4 +140,13 @@ export class DataManager {
         return logins
     }
 
+    // clear
+
+    clear() {
+        this.data = {logins: [], notes: [], tags: []}
+        this.jsonData = ""
+        this.setJsonData(JSON.stringify({logins: [], notes: [], tags: []}))
+        this.uiUpdate = () => {}
+    }
+
 }

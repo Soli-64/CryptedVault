@@ -11,29 +11,35 @@ type UnlockedViewProps = {
     lock: () => void
 }
 
+enum ViewFocus {
+    DASH,
+    LOGINS,
+    NOTES,
+    TAGS
+}
+
 export const UnlockedView = (props: UnlockedViewProps) => {
 
     const {vaultName, lock} = props
     const [data, setData] = useState<VaultData>({logins: [], notes: [], tags: []})
+    const [viewFocus, setViewFocus] = useState<ViewFocus>(ViewFocus.DASH)
+
+    const {
+        logins,
+        notes,
+        tags
+    } = data;
 
     useEffect(() => {
         manager.create_sv(setData)
-    })
+        return () => manager.clear()
+    }, [])
 
     return (
         <SidebarProvider>
             <AppSidebar vaultName={vaultName} onLock={lock} />
             <div>
                 <SidebarTrigger />
-                <hr />
-                <p>{JSON.stringify(data)}</p>
-                <hr />
-                <button onClick={() => manager.add_login({service:"amazon.com"})}>
-                    New Login
-                </button>
-                <button onClick={() => manager.del_login(manager.data.logins[0].id)}>
-                    Del Login
-                </button>
             </div>
         </SidebarProvider>
     )

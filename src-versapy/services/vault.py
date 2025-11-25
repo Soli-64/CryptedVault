@@ -1,5 +1,5 @@
 
-import os
+import os, json
 from versapy.storage import Model
 from cryptography.fernet import Fernet
 from versapy import VersaPyApp
@@ -74,6 +74,12 @@ class VaultsManager:
             return {"success": False, "error": "not logged in", "data": None}
         try:
             data = DataManager.decrypt(self.current_fernet, self.current_vault.encrypted_data)
+            try:
+                d=json.loads(data)
+                print(d)
+            except:
+                data = '{"logins":[],"notes":[],"tags":[]}'
+            print(data)
             self._shared_vault = self.app.SharedValue("decrypted_data", data, lambda _: self.update(data=_))
             wipe(data)
         except:
