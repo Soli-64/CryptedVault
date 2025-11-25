@@ -1,29 +1,49 @@
 import type { Login, Note, Tag, VaultData } from "@/types/data.type";
 import { toast } from "sonner";
+import { createSharedValue } from "versapy/api";
 
+
+const genid = () => Math.floor(Date.now()*Math.random())
 
 export class DataManager {
 
-    jsonData: string;
+    jsonData: string | null;
     data: VaultData;
-    setData: (arg: string) => void;
+    setJsonData: (arg: string) => void;
+    uiUpdate: (_: VaultData) => void;
 
-    constructor(data: string, setData: (arg: string) => void) {
-        this.jsonData = data; 
-        this.data = this.parsed_data()
-        this.setData = setData
+    constructor() {
+        this.jsonData = "";
+        this.setJsonData = () => {}
+        this.data = {logins: [], notes: [], tags: []};
+        this.uiUpdate = () => {}
+        // [this.jsonData, this.setJsonData] = createSharedValue<string>("decrypted_data", (_) => {this.jsonData = _;this.data=JSON.parse(_)} )
     }
 
     parsed_data(): VaultData {
-        return JSON.parse(this.jsonData)
+        if (!this.jsonData) return {logins: [], notes: [], tags: []}
+        try {
+            return JSON.parse(this.jsonData)
+        } catch (e) {
+            console.error("Error parsing data: ", e)
+            console.log(this.jsonData)
+            return {logins: [], notes: [], tags: []}
+        }
+    }
+
+    create_sv(cb: (_: VaultData) => void) {
+        this.uiUpdate = cb;
+        [this.jsonData, this.setJsonData] = createSharedValue<string>("decrypted_data", (_) => {this.jsonData = _;this.data=JSON.parse(_);this.uiUpdate(JSON.parse(_))} )
     }
 
     json_data() {
+        console.log("Settings in db: ", this.data)
         return JSON.stringify(this.data) 
     }
 
     update_db() {
-        this.setData(this.json_data())
+        this.uiUpdate(this.data)
+        this.setJsonData(this.json_data())
     }
 
     // NOTES
@@ -32,7 +52,7 @@ export class DataManager {
         let check = this.data.notes.filter(n => n.title === props.title)
         if (check.length > 0) return toast("Can't create 2 notes with the same name.")
         const note: Note = {
-            id: Date.now()*Math.random(),
+            id: genid(),
             ...props
         }
         this.data.notes.push(note)
@@ -55,10 +75,11 @@ export class DataManager {
 
     add_login(props: Omit<Login, "id">) {
         const login: Login = {
-            id: Date.now()*Math.random(),
+            id: genid(),
             ...props
         }
         this.data.logins.push(login)
+        console.log(this.data.logins)
         this.update_db()
     }
 
@@ -78,7 +99,7 @@ export class DataManager {
 
     add_tag(props: Omit<Tag, "id">) {
         const tag: Tag = {
-            id: Date.now()*Math.random(),
+            id: genid(),
             ...props
         }
         this.data.tags.push(tag)

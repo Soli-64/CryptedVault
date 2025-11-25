@@ -82,9 +82,10 @@ class VaultsManager:
     
     def update(self, data=None, vaultname=None):
         if not self.current_fernet or not self.current_vault:
+            print("no update")
             wipe(data)
             return {"success": False, "error": "not logged in", "data": None}
-        
+        print(data, vaultname)
         if data is not None:
             self.current_vault.update(encrypted_data=DataManager.encrypt(self.current_fernet, data))
             wipe(data)
@@ -109,7 +110,7 @@ class VaultsManager:
 
         if self._shared_vault:
             junk = "X" * 4096 + os.urandom(1024).decode('latin1', 'ignore')
-            self._shared_vault.set(junk)
+            # self._shared_vault.set(junk)
             wipe(junk)
             del self._shared_vault
             self._shared_vault = None

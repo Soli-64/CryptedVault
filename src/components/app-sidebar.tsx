@@ -5,16 +5,31 @@ import {
     SidebarGroup,
     SidebarHeader,
   } from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
    
-export function AppSidebar() {
+type AppSidebarProps = {
+    onLock: () => void
+    vaultName: string
+}
+
+export function AppSidebar(props: AppSidebarProps) {
+
+    const {onLock, vaultName} = props
+
     return (
         <Sidebar>
-        <SidebarHeader />
-        <SidebarContent>
-            <SidebarGroup />
-            <SidebarGroup />
-        </SidebarContent>
-        <SidebarFooter />
+        
+            <SidebarHeader>{vaultName}</SidebarHeader>
+
+            <SidebarContent>
+                <SidebarGroup />
+                <SidebarGroup />
+            </SidebarContent>
+            
+            <SidebarFooter> 
+                <Button onClick={() => onLock()}>Log Out</Button>
+            </SidebarFooter>
+        
         </Sidebar>
     )
 }

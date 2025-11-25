@@ -24,7 +24,7 @@ type LoginViewProps = {
     create: (vaultname: string) => void
 }
 
-export const UnlockView = (props: LoginViewProps) => {
+export const LockedView = (props: LoginViewProps) => {
 
 
     const [vaultsNames, setVaultsNames] = useState<string[]>([])
@@ -44,7 +44,6 @@ export const UnlockView = (props: LoginViewProps) => {
         if (pasw.includes(" ")) return toast("Password can't contain spaces");
         if (pasw.trim().length < 8) return toast("Password must be at least 8 characters.");
         if (pasw !== confirmPasw) return toast("Passwords aren't identical.");
-        
         create(newVaultName)
     }
 
@@ -68,7 +67,7 @@ export const UnlockView = (props: LoginViewProps) => {
     } = props;
 
     return (
-        <div className="absolute top-0 left-0 w-screen h-screen bg-background flex flex-col items-center justify-around">
+        <div className="absolute top-0 left-0 w-screen h-screen bg-background flex flex-col items-center justify-around z-999">
             <Dialog>
             <div className="w-2/3 h-1/2 flex flex-col items-center">
                 <div className="h-1/2 w-full flex items-center gap-4 justify-center overflow-x">

@@ -11,6 +11,7 @@ manager = VaultsManager(app)
 @app.expose
 def connected():
     print("connected call")
+    print((manager.current_vault != None))
     return (manager.current_vault != None)
 
 @app.expose
@@ -33,7 +34,7 @@ def unlock_vault(vault_name, pasw):
     return log_try["success"]
 
 @app.expose
-def log_out():
+def lock_vault():
     return manager.reset()
     
 @app.expose

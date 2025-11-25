@@ -1,6 +1,4 @@
 import { Outlet } from "react-router-dom"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
 
 const StaticLayout = () => {
 
@@ -8,11 +6,7 @@ const StaticLayout = () => {
         <div
         className="w-full h-screen flex flex-row overflow-hidden"
         >
-            <SidebarProvider>
-                <AppSidebar />
-                <Outlet/>
-            </SidebarProvider>
-
+            <Outlet/>
         </div>
     )
 
