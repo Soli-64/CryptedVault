@@ -1,22 +1,20 @@
 
 import { useEffect, useState } from "react";
 import { invoke } from "versapy/api";
+import { UnlockedView } from "./views/UnlockedView";
 import { LockedView } from "./views/LockedView";
-import { UnlockedView } from "./views/ConnectedView";
-
 
 enum State {LOADING,DECONNECTED,CONNECTED}
 
-const HomeView = () => {
+const App = () => {
 
     const [logged, setLogged] = useState<State>(State.LOADING)
-    // const [jsonData, setJsonData] = useStoredData(logged===State.CONNECTED)
     const [password, setPassword] = useState<string>("")
     const [vaultName, setVaultName] = useState<string>("")
     
     const checkLog = async () => {
         const r = await invoke<boolean>("connected")
-        console.log("Logged ?")
+        // TODO: GET ACTUAL VAULT NAME and setVaultName it
         setLogged(r ? State.CONNECTED : State.DECONNECTED)
     }
 
@@ -52,7 +50,7 @@ const HomeView = () => {
     } 
 
     return (
-        <div>
+        <div className="w-full h-full">
             {
                 logged === State.LOADING &&
                 <div className="w-screen h-screen bg-background absolute top-0 left-0 flex flex-col items-center justify-center">
@@ -77,4 +75,4 @@ const HomeView = () => {
 
 } 
 
-export default HomeView;
+export default App;

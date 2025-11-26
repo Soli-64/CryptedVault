@@ -1,8 +1,9 @@
 {
-  "name": "CryptedVault",
+  "name": "cryptedvault",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "repository": "https://github.com/Soli-64/CryptedVault",
   "scripts": {
     "dev": "vpy-dev",
     "build": "vpy-build",
@@ -27,6 +28,7 @@
     "next-themes": "^0.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-resizable-panels": "^3.0.6",
     "react-router-dom": "^7.9.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",

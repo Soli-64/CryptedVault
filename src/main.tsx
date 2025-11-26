@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import HomeView from './pages/Home.tsx';
+import App from './pages/App.tsx';
 import StaticLayout from './pages/generics/StaticLayout.tsx';
 import NotFoundView from './pages/generics/NotFound.tsx';
 import { ThemeProvider } from "@/components/theme-provider"
@@ -14,7 +14,7 @@ const PageManager = () => {
   return (
     <Routes>
       <Route path='/' element={<StaticLayout/>}>
-        <Route path='/' element={<HomeView />}></Route>
+        <Route path='/' element={<App />}></Route>
       </Route>
       <Route path='*' element={<NotFoundView />}></Route>
     </Routes>

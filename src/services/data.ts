@@ -17,7 +17,6 @@ export class DataManager {
         this.setJsonData = () => {}
         this.data = {logins: [], notes: [], tags: []};
         this.uiUpdate = () => {}
-        // [this.jsonData, this.setJsonData] = createSharedValue<string>("decrypted_data", (_) => {this.jsonData = _;this.data=JSON.parse(_)} )
     }
 
     parsed_data(): VaultData {
@@ -31,9 +30,17 @@ export class DataManager {
         }
     }
 
-    create_sv(cb: (_: VaultData) => void) {
+    async create_sv(cb: (_: VaultData) => void) {
         this.uiUpdate = cb;
-        [this.jsonData, this.setJsonData] = createSharedValue<string>("decrypted_data", (_) => {this.jsonData = _;this.data=JSON.parse(_);this.uiUpdate(JSON.parse(_))} )
+        [this.jsonData, this.setJsonData] = await createSharedValue<string>("decrypted_data", (_) => {
+            console.log("Sv called")
+            if (typeof _ !== "string") return;
+            console.log("Data updated from SV: ", _)
+            this.jsonData = _;
+            this.data=JSON.parse(_);
+            this.uiUpdate(JSON.parse(_))
+        })
+        console.log(this.jsonData, "jsonData")
     }
 
     json_data() {
@@ -42,6 +49,7 @@ export class DataManager {
     }
 
     update_db() {
+        console.log("Update DB...", this.data)
         this.uiUpdate(this.data)
         this.setJsonData(this.json_data())
     }
@@ -79,7 +87,6 @@ export class DataManager {
             ...props
         }
         this.data.logins.push(login)
-        console.log(this.data.logins)
         this.update_db()
     }
 
@@ -145,7 +152,7 @@ export class DataManager {
     clear() {
         this.data = {logins: [], notes: [], tags: []}
         this.jsonData = ""
-        this.setJsonData(JSON.stringify({logins: [], notes: [], tags: []}))
+        this.setJsonData(JSON.stringify(this.data))
         this.uiUpdate = () => {}
     }
 

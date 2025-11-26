@@ -74,11 +74,7 @@ class VaultsManager:
             return {"success": False, "error": "not logged in", "data": None}
         try:
             data = DataManager.decrypt(self.current_fernet, self.current_vault.encrypted_data)
-            try:
-                d=json.loads(data)
-                print(d)
-            except:
-                data = '{"logins":[],"notes":[],"tags":[]}'
+            data = data if json.loads(data) else '{"logins":[],"notes":[],"tags":[]}'
             print(data)
             self._shared_vault = self.app.SharedValue("decrypted_data", data, lambda _: self.update(data=_))
             wipe(data)
@@ -116,7 +112,7 @@ class VaultsManager:
 
         if self._shared_vault:
             junk = "X" * 4096 + os.urandom(1024).decode('latin1', 'ignore')
-            # self._shared_vault.set(junk)
+            self._shared_vault = junk
             wipe(junk)
             del self._shared_vault
             self._shared_vault = None
