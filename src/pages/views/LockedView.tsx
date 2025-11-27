@@ -34,7 +34,6 @@ export const LockedView = (props: LoginViewProps) => {
 
     const loadVaultsNames = async () => {
         const names = await invoke<string[]>('get_vaults')
-        console.log(names)
         setVaultsNames(names || [])
     }
 

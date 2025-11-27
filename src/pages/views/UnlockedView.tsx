@@ -3,7 +3,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { DataManager } from "@/services/data"
 import type { VaultData } from "@/types/data.type"
 import { useEffect, useState } from "react"
-import { LoginsView } from "./LoginsView"
+import { LoginsView } from "./DataViews/LoginsView"
+import NotesView from "./DataViews/NotesView"
 
 const manager = new DataManager()
 
@@ -27,12 +28,12 @@ export const UnlockedView = (props: UnlockedViewProps) => {
     const [viewFocus, setViewFocus] = useState<ViewFocus>(ViewFocus.LOGINS)
 
     useEffect(() => {
-        console.log("Componet mounted, creating SV...")
         manager.create_sv(setData)
     }, [])
 
     const {
-        logins, notes,
+        logins, 
+        notes,
         tags
     } = data;
 
@@ -51,9 +52,7 @@ export const UnlockedView = (props: UnlockedViewProps) => {
                 }
                 {
                     viewFocus === ViewFocus.NOTES &&
-                    <div>Notes View - notes
-                        <button onClick={() => console.log(data.notes)}>Notes</button>
-                    </div>
+                    <NotesView notes={notes} manager={manager} />
                 }
                 {
                     viewFocus === ViewFocus.TAGS &&

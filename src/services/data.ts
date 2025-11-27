@@ -25,7 +25,6 @@ export class DataManager {
             return JSON.parse(this.jsonData)
         } catch (e) {
             console.error("Error parsing data: ", e)
-            console.log(this.jsonData)
             return {logins: [], notes: [], tags: []}
         }
     }
@@ -33,23 +32,18 @@ export class DataManager {
     async create_sv(cb: (_: VaultData) => void) {
         this.uiUpdate = cb;
         [this.jsonData, this.setJsonData] = await createSharedValue<string>("decrypted_data", (_) => {
-            console.log("Sv called")
             if (typeof _ !== "string") return;
-            console.log("Data updated from SV: ", _)
             this.jsonData = _;
             this.data=JSON.parse(_);
             this.uiUpdate(JSON.parse(_))
         })
-        console.log(this.jsonData, "jsonData")
     }
 
     json_data() {
-        console.log("Settings in db: ", this.data)
         return JSON.stringify(this.data) 
     }
 
     update_db() {
-        console.log("Update DB...", this.data)
         this.uiUpdate(this.data)
         this.setJsonData(this.json_data())
     }
